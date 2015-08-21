@@ -5,6 +5,21 @@ var favicon = require('serve-favicon');
 var members = require('./memberController');
 var bills = require('./billController');
 var utils = require('./utilController');
+var mongoose = require('mongoose');
+
+//DB stuff here
+//
+//
+DB_URI = process.env.DB_URI || 'mongodb://localhost/legacy';
+mongoose.connect(DB_URI);
+var db = mongoose.connection;
+
+// Log database connection errors
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log("Mongo DB connection is open");
+});
+
 
 var app = express();
 
@@ -21,7 +36,7 @@ app.use(favicon(__dirname + '/../client/favicon.ico'));
     id3: {memberEntry},
     id4: {memberEntry},
     id5: {memberEntry}, ...
-  } 
+  }
 */
 var memberList = {};
 
@@ -29,7 +44,7 @@ var memberList = {};
 var trendingList = [];
 
 /*  memberProfile will eventually look like this after a GET request to a member_ID
-  { 
+  {
     id: 412669,
     name: 'Sen. Mike Rounds [R-SD]',
     description: 'Junior Senator from South Dakota',
@@ -39,13 +54,13 @@ var trendingList = [];
     twitterid: 'SenatorRounds',
     youtubeid: null,
     website: 'http://www.rounds.senate.gov',
-    phone: '202-224-5842' 
+    phone: '202-224-5842'
   }
 */
 var memberProfile = {};
 
 
-/* billInfo will look like this after a GET request to a specific bill_ID 
+/* billInfo will look like this after a GET request to a specific bill_ID
   {
     question: 'Cloture on S. 1881: A bill to prohibit Federal funding of Planned Parenthood Federation of America.',
     thomas_link: undefined,
@@ -93,7 +108,7 @@ app.get('/members/*', function(req, res){
 // sends back memberVotes JSON to client
 
 /* memberVotes will look like this after a GET request to a specific member's voting record
-  [ 
+  [
      { id: ID
       vote: STRING_OF_VOTE,
       bill_question: STRING_OF_QUESTION,
@@ -136,7 +151,7 @@ app.get('/*', function(req, res){
 
 // this expression runs on server start, retrieves a list of current members and writes it to memberList
 members.getAllMembers(function(objects){
-  
+
   objects.forEach(function(listing){
     var id = listing.person.id;
     memberList[id] = utils.makeMemberEntry(listing);
