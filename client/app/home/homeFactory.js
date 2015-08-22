@@ -8,7 +8,7 @@ module.exports = function homeFactory($http){
   /*******************************************
    * Loads All Members Name and ID from server
    ******************************************/
-  
+
   function getAllMembers(){
     return $http({
       method: 'GET',

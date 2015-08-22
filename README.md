@@ -7,7 +7,7 @@
   - __Product Owner__: Christopher Griffis
   - __Scrum Master__: Syed Jafri
   - __Development Team Members__: Andrey Azov, Cliff Saporta Cheng
-  
+
 
 ## Table of Contents
 
@@ -68,7 +68,7 @@ Enter `npm start` in one terminal window
 
 Run `gulp` in the root of the project in a different terminal window. This will start the `gulp watch` task, which runs js-hint and builds the project files in the public folder.
 
-Every time a change is made in the client folder, the project will be re-built and placed in the public folder in real-time. One of the tasks automatically run by gulp watcher during this step is `browserify-dev`, which executes very quickly, but produces a huge concatenated js file. Therefore this is suitable (and convenient) only for development purposes. 
+Every time a change is made in the client folder, the project will be re-built and placed in the public folder in real-time. One of the tasks automatically run by gulp watcher during this step is `browserify-dev`, which executes very quickly, but produces a huge concatenated js file. Therefore this is suitable (and convenient) only for development purposes.
 
 ### Installing Dependencies
 
@@ -94,7 +94,9 @@ Questions:
 - are we deploying on Heroku? something else?
 
 
+
 Back-end team:
+- deploy on Heroku - DONE
 - implement a database
 - when a user searches for a senator, check if that person has already been stored
 - if not, grab query the api for that person and store it in the database
@@ -108,11 +110,8 @@ Stretch:
 
 
 Front-end team:
-- implement geolocation to find the user's state
-- show/suggest senators for that state
-- remove 'recent searches'? is that a useful feature? or just place the senators for the user's location above that section
-- or combine the two features and make a suggested senators based on location first and last searched second
-- maybe start with a naive approach first (just based on location with api call), and then expand it later if we feel it would be worthwhile enough to the user based on the time it would take the implement it
+- implement geolocation to find the user's state - DONE
+- show/suggest senators for that state - DONE
 
 - research development with heroku (any limitations for database/storage?)
 
