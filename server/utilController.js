@@ -3,12 +3,12 @@ var _ = require('underscore');
 module.exports = {
 
   // takes in a JSON listing of a single congress person, returns a shortened object like:
-  /*  { 
+  /*  {
         id: 400408,
         firstName: 'Patrick',
         lastName: 'Toomey',
-        title: 'Sen. Patrick “Pat” Toomey [R-PA]' 
-      } 
+        title: 'Sen. Patrick “Pat” Toomey [R-PA]'
+      }
   */
   makeMemberEntry: function(listing) {
     return {
@@ -21,7 +21,7 @@ module.exports = {
   },
 
   // takes in a JSON listing of a listing from govTrack Person API, returns like:
-  /*  { 
+  /*  {
         id: 412669,
         name: 'Sen. Mike Rounds [R-SD]',
         description: 'Junior Senator from South Dakota',
@@ -31,7 +31,7 @@ module.exports = {
         twitterid: 'SenatorRounds',
         youtubeid: null,
         website: 'http://www.rounds.senate.gov',
-        phone: '202-224-5842' 
+        phone: '202-224-5842'
       }
   */
   makeMemberProfile: function(listing) {
@@ -113,6 +113,25 @@ module.exports = {
         trendingList.unshift(member);
       }
     }
+  },
+
+  cacheOnDB: function(dbModel, dbQuery, dbCallBack, apiCallback){
+    // Build the DB query to search if the data is present
+    dbModel.find(dbQuery).exec(function(err, found){
+      if(err){
+        console.log('ERROR: ', err);
+        res.send(err);
+      }
+      // if we got data stored on DB, we pass it to the callback for it
+      if (found.length > 0) {
+        dbCallBack(found);
+      // else we pass it a special callback that will handle callling the trackgovAPI
+      } else {
+        apiCallback();
+      }
+    })
   }
+
+
 
 };

@@ -175,59 +175,45 @@ app.get('/*', function(req, res){
 
 // this expression runs on server start, retrieves a list of current members and writes it to memberList
 // Check if we have members data on the db (stretch: how old is that data)
-
-
-MemberEntry.find({}).exec(function(err, foundMembers){
-  if(err){
-    console.log('ERROR: ', err);
-    res.send(err);
-  }
-  // console.log('members: ', members);
-  // if we do have members data on DB we use that data to populate the in-memory object
-  if (foundMembers.length > 0) {
-    var startDB = now();
-    memberList = _.reduce(foundMembers, function(accumulator, current){
-      accumulator[current.id] = current;
-      return accumulator;
-    }, {});
-    // console.log('MEMBER LIST:', memberList);
-
-    utils.addMembersToTrendingList(null, memberList, trendingList);
-    console.log('SENDING MEMBER LIST AND TREND LIST');
-    var endDB = now();
-    console.log('DB TIME');
-    console.log((endDB - startDB).toFixed(5));
-    // console.log('TEST ', test);
-  } else {
-    // else call the trackgov API and both populate the inmemory object and db with it
+// TODO: stretch - check how old is the data stored on DB, and reseed from trckgov if necessary.
+utils.cacheOnDB(MemberEntry, {}, function(foundMembers){
+  var start = now();
+  memberList = _.reduce(foundMembers, function(accumulator, current){
+    accumulator[current.id] = current;
+    return accumulator;
+  }, {});
+  // console.log('MEMBER LIST:', memberList);
+  utils.addMembersToTrendingList(null, memberList, trendingList);
+  var end = now();
+  console.log('DB Time: ', (end - start).toFixed(5));
+}, function(){
+  members.getAllMembers(function(objects){
     var start = now();
-    members.getAllMembers(function(objects){
-      objects.forEach(function(listing){
-        var id = listing.person.id;
-        memberList[id] = utils.makeMemberEntry(listing);
-        var memberProperties = utils.makeMemberEntry(listing);
+    objects.forEach(function(listing){
+      var id = listing.person.id;
+      memberList[id] = utils.makeMemberEntry(listing);
+      var memberProperties = utils.makeMemberEntry(listing);
 
-        var memberEntry = new MemberEntry();
-        _.extend(memberEntry, memberProperties);
+      var memberEntry = new MemberEntry();
+      _.extend(memberEntry, memberProperties);
 
-        memberEntry.save(function(err) {
-          if (err) {
-            // console.log('ERROR:', err);
-            res.send(err);
-          }
-          res.json(memberEntry);
-        });
-
+      memberEntry.save(function(err) {
+        if (err) {
+          // console.log('ERROR:', err);
+          res.send(err);
+        }
+        res.json(memberEntry);
       });
 
-      // console.log('MEMBER LIST:', memberList);
-      utils.addMembersToTrendingList(null, memberList, trendingList);
-      var end = now();
-      console.log('API TIME');
-      console.log((end - start).toFixed(5));
     });
-  }
+    // console.log('MEMBER LIST:', memberList);
+    utils.addMembersToTrendingList(null, memberList, trendingList);
+    var end = now();
+    console.log('API Time: ', (end - start).toFixed(5));
+  });
 });
+
+
 
 
 module.exports = app;
