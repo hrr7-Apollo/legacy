@@ -118,7 +118,6 @@ app.get('/members/*', function(req, res){
   } else { // we are depending on the base being a valid member_id if it is not 'all'
     var member_id = Number(pathObj.base);
     members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
-      console.log('ASYJGFHFJHTEWTFHFJHGE');
       // (also, add this congressman to the trending list)
       utils.addMembersToTrendingList(member_id, memberList, trendingList);
       memberProfile = utils.makeMemberProfile(listing);
@@ -175,10 +174,9 @@ app.get('/*', function(req, res){
 
 // this expression runs on server start, retrieves a list of current members and writes it to memberList
 members.getAllMembers(function(objects){
-  var exampleObj = {};
   objects.forEach(function(listing){
     var id = listing.person.id;
-    exampleObj[id] = utils.makeMemberEntry(listing);
+    memberList[id] = utils.makeMemberEntry(listing);
     var memberProperties = utils.makeMemberEntry(listing);
 
     var memberEntry = new MemberEntry();
@@ -193,22 +191,9 @@ members.getAllMembers(function(objects){
     });
 
   });
-  // MemberEntry.find({}).exec(function(err, members){
-  //   if(err){
-  //     console.log('ERROR: ', err);
-  //     res.send(err);
-  //   }
-  //   // console.log('members: ', members);
-  //   memberList = _.reduce(members, function(accumulator, current){
-  //     accumulator[current.id] = current;
-  //     return accumulator;
-  //   }, {});
-  //   // console.log('TEST ', test);
-  //   console.log('SENDING MEMBER LIST AND TREND LIST');
-  // });
-  //TODO: THIS MAY/WILL NEED TO BE CHANGED
+  
   console.log('MEMBER LIST:', memberList);
-  utils.addMembersToTrendingList(null, exampleObj, trendingList);
+  utils.addMembersToTrendingList(null, memberList, trendingList);
 });
 
 module.exports = app;
