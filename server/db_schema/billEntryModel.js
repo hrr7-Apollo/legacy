@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var billEntrySchema = new mongoose.Schema({
   // the apiId is the id of the bill in the data we're receiving from the govtrack api
-  apiId: {
+  bill_id: {
     type: Number,
     unique:true
   },
