@@ -6,10 +6,12 @@ var members = require('./memberController');
 var bills = require('./billController');
 var utils = require('./utilController');
 var mongoose = require('mongoose');
+var _ = require('underscore');
 
-//DB stuff here
-//
-//
+///////////
+// CONFIG
+///////////
+// DB_URI enviroment variable contains mongoLab url for production server
 DB_URI = process.env.DB_URI || 'mongodb://localhost/legacy';
 mongoose.connect(DB_URI);
 var db = mongoose.connection;
@@ -19,6 +21,11 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("Mongo DB connection is open");
 });
+
+///////////
+// MODELS
+///////////
+var MemberEntry = require('./db_schema/memberEntryModel.js');
 
 
 var app = express();
@@ -91,10 +98,27 @@ app.get('/members/*', function(req, res){
   }
   // if call for all, send back JSON of memberList and trendingListcreated on server start
   else if (pathObj.base === 'all') {
+    //res.send({memberList: memberList, trendingList: trendingList});
+
+    // MemberEntry.find({}).exec(function(err, members){
+    //   if(err){
+    //     console.log('ERROR: ', err);
+    //     res.send(err);
+    //   }
+    //   // console.log('members: ', members);
+    //   memberList = _.reduce(members, function(accumulator, current){
+    //     accumulator[current.id] = current;
+    //     return accumulator;
+    //   }, {});
+    //   // console.log('TEST ', test);
+    //   console.log('SENDING MEMBER LIST AND TREND LIST');
+    //   
+    // })
     res.send({memberList: memberList, trendingList: trendingList});
   } else { // we are depending on the base being a valid member_id if it is not 'all'
     var member_id = Number(pathObj.base);
     members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
+      console.log('ASYJGFHFJHTEWTFHFJHGE');
       // (also, add this congressman to the trending list)
       utils.addMembersToTrendingList(member_id, memberList, trendingList);
       memberProfile = utils.makeMemberProfile(listing);
@@ -151,12 +175,40 @@ app.get('/*', function(req, res){
 
 // this expression runs on server start, retrieves a list of current members and writes it to memberList
 members.getAllMembers(function(objects){
-
+  var exampleObj = {};
   objects.forEach(function(listing){
     var id = listing.person.id;
-    memberList[id] = utils.makeMemberEntry(listing);
+    exampleObj[id] = utils.makeMemberEntry(listing);
+    var memberProperties = utils.makeMemberEntry(listing);
+
+    var memberEntry = new MemberEntry();
+    _.extend(memberEntry, memberProperties);
+    
+    memberEntry.save(function(err) {
+      if (err) {
+        // console.log('ERROR:', err);
+        res.send(err);
+      }
+      res.json(memberEntry);
+    });
+
   });
-  utils.addMembersToTrendingList(null, memberList, trendingList);
+  // MemberEntry.find({}).exec(function(err, members){
+  //   if(err){
+  //     console.log('ERROR: ', err);
+  //     res.send(err);
+  //   }
+  //   // console.log('members: ', members);
+  //   memberList = _.reduce(members, function(accumulator, current){
+  //     accumulator[current.id] = current;
+  //     return accumulator;
+  //   }, {});
+  //   // console.log('TEST ', test);
+  //   console.log('SENDING MEMBER LIST AND TREND LIST');
+  // });
+  //TODO: THIS MAY/WILL NEED TO BE CHANGED
+  console.log('MEMBER LIST:', memberList);
+  utils.addMembersToTrendingList(null, exampleObj, trendingList);
 });
 
 module.exports = app;
