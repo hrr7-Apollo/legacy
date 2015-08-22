@@ -16,11 +16,14 @@ DB_URI = process.env.DB_URI || 'mongodb://localhost/legacy';
 mongoose.connect(DB_URI);
 var db = mongoose.connection;
 
+
 // Log database connection errors
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("Mongo DB connection is open");
 });
+
+
 
 ///////////
 // MODELS
@@ -193,7 +196,7 @@ members.getAllMembers(function(objects){
 
   });
 
-  console.log('MEMBER LIST:', memberList);
+  // console.log('MEMBER LIST:', memberList); // *** commented out ***
   utils.addMembersToTrendingList(null, memberList, trendingList);
 });
 
