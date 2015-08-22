@@ -26,6 +26,7 @@ db.once('open', function() {
 // MODELS
 ///////////
 var MemberEntry = require('./db_schema/memberEntryModel.js');
+var BillEntry = require('./db_schema/billEntryModel.js'); // *** ADDED ***
 
 
 var app = express();
@@ -112,7 +113,7 @@ app.get('/members/*', function(req, res){
     //   }, {});
     //   // console.log('TEST ', test);
     //   console.log('SENDING MEMBER LIST AND TREND LIST');
-    //   
+    //
     // })
     res.send({memberList: memberList, trendingList: trendingList});
   } else { // we are depending on the base being a valid member_id if it is not 'all'
@@ -181,7 +182,7 @@ members.getAllMembers(function(objects){
 
     var memberEntry = new MemberEntry();
     _.extend(memberEntry, memberProperties);
-    
+
     memberEntry.save(function(err) {
       if (err) {
         // console.log('ERROR:', err);
@@ -191,7 +192,7 @@ members.getAllMembers(function(objects){
     });
 
   });
-  
+
   console.log('MEMBER LIST:', memberList);
   utils.addMembersToTrendingList(null, memberList, trendingList);
 });
