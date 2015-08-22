@@ -27,7 +27,7 @@ db.once('open', function() {
 // MODELS
 ///////////
 var MemberEntry = require('./db_schema/memberEntryModel.js');
-
+var MemberProfile = require('./db_schema/memberProfileModel.js');
 
 var app = express();
 
@@ -94,36 +94,63 @@ app.get('/members/*', function(req, res){
     var member_id = Number(pathObj.base);
     // We are not formatting the returned object
     members.getMemberHistoricVotes(member_id, function(listing){
+      // console.log('LISTING:', listing);
       res.send(listing);
     });
   }
   // if call for all, send back JSON of memberList and trendingListcreated on server start
   else if (pathObj.base === 'all') {
-    //res.send({memberList: memberList, trendingList: trendingList});
 
-    // MemberEntry.find({}).exec(function(err, members){
-    //   if(err){
-    //     console.log('ERROR: ', err);
-    //     res.send(err);
-    //   }
-    //   // console.log('members: ', members);
-    //   memberList = _.reduce(members, function(accumulator, current){
-    //     accumulator[current.id] = current;
-    //     return accumulator;
-    //   }, {});
-    //   // console.log('TEST ', test);
-    //   console.log('SENDING MEMBER LIST AND TREND LIST');
-    //
-    // })
     res.send({memberList: memberList, trendingList: trendingList});
   } else { // we are depending on the base being a valid member_id if it is not 'all'
     var member_id = Number(pathObj.base);
-    members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
-      // (also, add this congressman to the trending list)
+    //new code
+    var query = {id: member_id};
+
+    utils.cacheOnDB(MemberProfile, query, function(foundMember){
+      var start = now();
+      // console.log('DB-callback', foundMember);
       utils.addMembersToTrendingList(member_id, memberList, trendingList);
-      memberProfile = utils.makeMemberProfile(listing);
-      res.send(memberProfile); // send back just the profile for that member
-    });
+      res.send(foundMember[0]);
+      var end = now();
+      console.log('DB Time: ', (end - start).toFixed(5));
+    },function(){
+      var start = now();
+      console.log('API-callback');
+      
+      members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
+        // (also, add this congressman to the trending list)
+      var memberProfile = new MemberProfile();
+        var profileProperties  = utils.makeMemberProfile(listing);
+        _.extend(memberProfile, profileProperties);
+        // console.log(memberProfile);
+        memberProfile.save(function(err) {
+          if (err) {
+            console.log('ERROR:', err);
+            res.send(err);
+          }
+          res.json(memberProfile);
+        })
+
+        utils.addMembersToTrendingList(member_id, memberList, trendingList);
+        console.log(memberProfile);
+        res.send(memberProfile); // send back just the profile for that member
+      });
+      var end = now()
+      console.log('API Time: ', (end - start).toFixed(5));
+    }, db);
+
+
+    
+
+    //old code vv
+    // members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
+    //   // (also, add this congressman to the trending list)
+    //   utils.addMembersToTrendingList(member_id, memberList, trendingList);
+    //   memberProfile = utils.makeMemberProfile(listing);
+    //   console.log(memberProfile);
+    //   res.send(memberProfile); // send back just the profile for that member
+    // });
   }
 });
 
@@ -184,6 +211,7 @@ utils.cacheOnDB(MemberEntry, {}, function(foundMembers){
   }, {});
   // console.log('MEMBER LIST:', memberList);
   utils.addMembersToTrendingList(null, memberList, trendingList);
+  console.log('Trending List ', trendingList);
   var end = now();
   console.log('DB Time: ', (end - start).toFixed(5));
 }, function(){
@@ -208,10 +236,11 @@ utils.cacheOnDB(MemberEntry, {}, function(foundMembers){
     });
     // console.log('MEMBER LIST:', memberList);
     utils.addMembersToTrendingList(null, memberList, trendingList);
+    console.log('Trending List ', trendingList);
     var end = now();
     console.log('API Time: ', (end - start).toFixed(5));
   });
-});
+}, db);
 
 
 

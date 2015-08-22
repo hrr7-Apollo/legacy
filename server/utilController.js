@@ -115,21 +115,27 @@ module.exports = {
     }
   },
 
-  cacheOnDB: function(dbModel, dbQuery, dbCallBack, apiCallback){
+  cacheOnDB: function(dbModel, dbQuery, dbCallBack, apiCallback, db){
     // Build the DB query to search if the data is present
-    dbModel.find(dbQuery).exec(function(err, found){
-      if(err){
-        console.log('ERROR: ', err);
-        res.send(err);
-      }
-      // if we got data stored on DB, we pass it to the callback for it
-      if (found.length > 0) {
-        dbCallBack(found);
-      // else we pass it a special callback that will handle callling the trackgovAPI
-      } else {
-        apiCallback();
-      }
-    })
+    
+    if(db.models[dbModel.modelName]){
+      //this if statement will check if model queried was defined yet
+      dbModel.find(dbQuery).exec(function(err, found){
+        if(err){
+          console.log('ERROR: ', err);
+          res.send(err);
+        }
+        // if we got data stored on DB, we pass it to the callback for it
+        if (found.length > 0) {
+          dbCallBack(found);
+        // else we pass it a special callback that will handle callling the trackgovAPI
+        } else {
+          apiCallback();
+        }
+      })
+    }else{
+      apiCallback();
+    }
   }
 
 
