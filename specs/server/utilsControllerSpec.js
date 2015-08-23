@@ -44,6 +44,7 @@ describe("Utils controller", function() {
     var responseFromGovTrack = fixtures.memberVoteFromGovtrack;
 
     var memberVoteInfo = {
+      bill_id:335663,
       id: 116144,
       link: 'https://www.govtrack.us/congress/votes/114-2015/s4',
       vote: 'Yea',
