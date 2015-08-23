@@ -79,7 +79,6 @@ module.exports = {
       }
   */
   makeBillInfo: function(listing) {
-    console.log('BILL LISTING ',listing);
     return {
       question: listing.question,
       thomas_link: listing.thomas_link,
@@ -119,7 +118,7 @@ module.exports = {
 
   cacheOnDB: function(dbModel, dbQuery, dbCallBack, apiCallback, db){
     // Build the DB query to search if the data is present
-    
+
     if(db.models[dbModel.modelName]){
       //this if statement will check if model queried was defined yet
       dbModel.find(dbQuery).exec(function(err, found){
@@ -138,7 +137,4 @@ module.exports = {
       apiCallback();
     }
   }
-
-
-
 };
