@@ -100,8 +100,8 @@ use legacy
 and run the following commands:
 
 ```
-load('seedBill.js');
-db.collections.billentries.createIndex( { subjects: "text" } );
+load('billSeedFile.js');
+db.billentries.createIndex( { subjects: "text" } );
 ```
 
 ## Contributing

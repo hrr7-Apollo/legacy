@@ -1,22 +1,24 @@
+# instructions for setting up Travis to work with karma and Chrome taken from:
+# http://www.andrewsouthpaw.com/2015/02/12/travis-ci-and-you/
+
 language: node_js
 node_js:
-- '0.12'
-- '0.10'
+  - '0.12'
+  - '0.10'
 before_install:
-- npm install -g bower
-- npm install -g gulp
+  - npm install -g bower
+  - npm install -g gulp
 install:
-- npm install
-before_script:
-- export CHROME_BIN=chromium-browser
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
-notifications:
+  - npm install
+before_script:  
+  # Special config for Chrome on Travis-CI
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+notifications:  
   email: false
 deploy:
   provider: heroku
   api_key:
-    secure: hPrt/PRuUm2FsRPc1eI+Tc4h1jTcdgxvs8wZNJGCRAbsqLRqwmY57bsb/O/wyV8z+hUJMgJ9eHNNSyiexcosV9y3tC5B8Fu40W373Gh0kVOIx+aF5JaixDwHNaerrWTkoGWemkDD03XJPAUIctu5RKufVpMoZ/Fub6JT4uwo3yzqjjXlwaNuEFmS5xjIXKwG6WtirdoUuizwrgmd4QGSXit66PhbOU9M8NRiC+ZKQakRFOdAyvKRoBQZ3hIWXczWNvpvNP9KU0LIY3Dq2InvGWqVL2oFiUu2MCr/n5RSmD9dQsKc4+mrgLHw0lOTCG0bjkNgWUv4OfNTwIB3yN1EfCCam72Vkl31l19jMly0K/q8MnS6UfxNvz7U7jqlWZyLnNlNi0odprny31KNzK8r0Z78KtR9QKMrtVQhciRPb1MZTH1teptiFUWULb0eJZbsaXE7wP8c63wrSboiG9K1Ogke9VfpB0uKuJTcztv98mu9u1+3uxwiUUw2bAQ9ydttVP2sG1TfZRmm4znDGo6+PXPyST1mb9ZELcvkgu01Vn2r3u/DoSqo9u8P2YxGr44MGzKLeyu24IyOxmKD73u5ZNgYcsPKo0fXXXw4H3YSMaJNtrS89Wf1w+gWVmJVEYWadtqGDw9JAnvOZGTAdt0zGNSejDT6s1tB05fcalxte6E=
-  app: mortal-kongress
-  on:
-    repo: hrr7-Apollo/legacy
+    secure: DgW2lBxD6URZjwMuuuxuY3KJJTSHALnZhJvqWeKJJhj5tuREAnzS/tx0FQRu/qXf18hJLjtCAJZS36TEz6jp3um2tIXr/9puo04bSdR9nXqc490LM0BvzCmUOjv5d4hJjXGQ50kATg59tITqrsnisaPBWzTjVSlfzBnAFesyFqiSAeHTSyDbMeIMBBxX1zaPE3dzhBUkIdEwnsQe/0OeEfQWhJ+fWQJcN0keqa9rgZfEFsyVKMqWfUpt6kS5nhHtZ1xgq4yi/lHQbbvD4aLtv7gr+WDqjRkWK6x3P7KI1HxO+R9wB4vtOmj6ppo3NeFJu4EeSWTHzuOp9lgCUSTDtV4zkbsn5+6iHxGSqNZwQK0Qs6uUHyYItayl/Zfx0MQBNJ36ccAeq7BKBkK5/3GwCUtlfvIaF2q8r5OpoLo8LQLa5uJeYAydMSF65f32bPpSsZQaF7BaEHYX5oRCUOIFDgwPzZTF0dBb6LdiVUSRpZrzHHMPLYrn9PgDRDU88Dbpc0ls0CkecgDt5025zTEUfdOVh1EUkdO9aor65e3VRuhvEdh0AYud4zfGD9AuI9mY/1f8V17RoCwC3bJ9hY4YUMQ8yxwzEuE9GlRebTHCm3Furtnw9L5tvDu+ckxe/OL+A044cV4UdqONwR+WHTCUXb/9fJd8fSvqWpF2eMCvcJI=
+  app: congressmanprofile

@@ -1,7 +1,7 @@
 // this example bill was found at the following address:
 // https://www.govtrack.us/data/congress/113/bills/hconres/hconres109/data.json
 
-db.billEntries.insert({
+db.billentries.insert({
   "bill_id": "hconres109-113",
   "subjects": [
     "Arms control and nonproliferation",

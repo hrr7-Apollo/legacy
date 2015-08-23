@@ -105,15 +105,17 @@ var billInfo = {};
 // search db for bill subjects
 app.get('/searchKeywords/:keyword', function(req, res){
   // get keyword(s) from req
-  var keywords = req.params;
-  console.log('keywords:', keywords);
+  var keyword = req.params.keyword;
+  console.log('keyword:', keyword);
   // perform indexed query using keyword
-  BillEntry.find({$text: {$search: keywords}})
+  BillEntry.find({$text: {$search: keyword}})
   .exec(function(err, bills){
+    if (err){console.log(err);}
     console.log("bills:", bills);
+    // reduce response to array of ID's to send back to client
+    var billIds = bills.map(function(bill){return bill.bill_id});
+    res.send(200, billIds);
   });
-  // reduce response to array of ID's to send back to client
-  res.send(200, "what is the up??");
 });
 
 // on a GET request to '/members/*' we see if it is a call for all members or a specific member
