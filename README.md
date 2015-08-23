@@ -101,7 +101,7 @@ and run the following commands:
 
 ```
 load('billSeedFile.js');
-db.billentries.createIndex( { subjects: "text" } );
+db.billentries.createIndex( { terms: "text" } );
 ```
 
 ## Contributing

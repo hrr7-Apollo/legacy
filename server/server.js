@@ -104,15 +104,14 @@ var billInfo = {};
 ///////////
 // search db for bill subjects
 app.get('/searchKeywords/:keyword', function(req, res){
-  // get keyword(s) from req
-  var keyword = req.params.keyword;
-  console.log('keyword:', keyword);
-  // perform indexed query using keyword
+  // get keyword(s) from req and replace all the underscores with spaces
+  var keyword = req.params.keyword.replace(/_/g, ' ');
+  // search through bills using the keyword received from the user
   BillEntry.find({$text: {$search: keyword}})
   .exec(function(err, bills){
     if (err){console.log(err);}
     console.log("bills:", bills);
-    // reduce response to array of ID's to send back to client
+    // send back the bill_id's of the bills that match the keyword to client
     var billIds = bills.map(function(bill){return bill.bill_id});
     res.send(200, billIds);
   });

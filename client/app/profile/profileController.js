@@ -2,7 +2,7 @@
 
 var d3 = require('d3');
 
-module.exports = function profileController($scope, $stateParams, Home){
+module.exports = function profileController($scope, $stateParams, Home, $http){
 
   var memberId1=$stateParams.id;
 
@@ -11,9 +11,10 @@ module.exports = function profileController($scope, $stateParams, Home){
   $scope.secondMember = {};
   $scope.commonVotes = [];
   $scope.test=0;
-  
+  $scope.filteredBillIds = [];
+
   getMember(memberId1, $scope.member);
- 
+
  /*******************************************
    * Load one Member Profile from Factory
    ******************************************/
@@ -30,7 +31,7 @@ module.exports = function profileController($scope, $stateParams, Home){
       getMemberVotes(member);
     }).catch(function(err){
       throw err;
-    });        
+    });
   }
 
    /*******************************************
@@ -73,6 +74,39 @@ module.exports = function profileController($scope, $stateParams, Home){
       $(".graph svg:last-child").remove();
     };
 
+   /*******************************************
+    * Search Votes by Keyword
+    ******************************************/
+    $scope.getBillsByKeyword = function(){
+      // get text out of input field
+      var keyword = $scope.billKeyword.replace(/ /g, '_');
+      console.log('scope billKeyword:', $scope.billKeyword);
+      // send GET request to /searchKeywords with text as params
+      $http({
+        method: 'GET',
+        url: '/searchKeywords/' + keyword,
+      })
+      .then(function(res){
+        // use $scope var to store bill_ids so they can be compared against the votes presented to the user
+        $scope.filteredBillIds = res.data;
+        console.log("$scope.filteredBillIds:", $scope.filteredBillIds);
+      });
+    };
+
+    /*******************************************
+    * Filter Votes by Keyword
+    ******************************************/
+    $scope.filterVotesByKeyword = function(){
+    // $scope.filteredLetters = function () {
+    // return $scope.letters.filter(function (letter) {
+    //   return $scope.filterBy.indexOf(letter.id) !== -1;
+    //   });
+    // };
+      console.log('member:', $scope.member);
+      return $scope.member.data.votes.filter(function(vote) {
+        return $scope.filteredBillIds.indexOf(vote.bill_id) !== -1;
+      });
+    };
 
   /*******************************************
    * Plot Historical Votes on Graph
@@ -86,7 +120,7 @@ module.exports = function profileController($scope, $stateParams, Home){
 
           //Pretty Date Format - Used for tooltip date
           var prettyDate = d3.time.format("%B %d, %Y");
-         
+
           //Parse Date and coerce numbers for ease of use
           data.forEach(function(d){
             d.created = parseDate(d.created);
@@ -115,7 +149,7 @@ module.exports = function profileController($scope, $stateParams, Home){
           //Map returned value to y scale
           var yMap = function(d) { return yScale(yValue(d)); };
           //Format y axis
-          var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(3);    
+          var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(3);
 
           //Create zoom behavior that calls zoomed function
           var zoom = d3.behavior.zoom()
@@ -174,7 +208,7 @@ module.exports = function profileController($scope, $stateParams, Home){
             .attr('x', (width - padding.left - 50) / 2)
             .attr('dy', "-.75em")
             .text(memberName);
-              
+
           //Setup Fill Color based on Vote value
           var color = function(value) {
             if (value === 'Yea' || value === 'Aye') {

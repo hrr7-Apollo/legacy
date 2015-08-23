@@ -7,11 +7,11 @@ var billEntrySchema = new mongoose.Schema({
   },
   // the bill_id is the id of the bill in the data we're receiving from the govtrack api
   bill_id: {
-    type: String,
+    type: Number,
     unique:true
   },
   // subjects is an array of keywords and phrases represented as strings
-  subjects: {
+  terms: {
     type: Array
   }
 });

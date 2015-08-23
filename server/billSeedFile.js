@@ -1,21 +1,15 @@
 // this example bill was found at the following address:
-// https://www.govtrack.us/data/congress/113/bills/hconres/hconres109/data.json
+// https://www.govtrack.us/api/v2/bill/76446
 
 db.billentries.insert({
-  "bill_id": "hconres109-113",
-  "subjects": [
-    "Arms control and nonproliferation",
-    "Congressional-executive branch relations",
-    "Human rights",
-    "International affairs",
-    "International law and treaties",
-    "Iran",
-    "Israel",
-    "Middle East",
-    "Nuclear weapons",
-    "Political movements and philosophies",
-    "Sanctions",
+  "bill_id": "76446",
+  "terms": [
+    "Industrial facilities",
     "Terrorism",
-    "Trade restrictions"
+    "Emergency Management",
+    "Homeland security",
+    "Hazardous wastes and toxic substances",
+    "Administrative law and regulatory procedures",
+    "Department of Homeland Security",
   ]
 });
