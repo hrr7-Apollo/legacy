@@ -25,12 +25,11 @@ db.once('open', function() {
 });
 
 
-
-
 ///////////
 // MODELS
 ///////////
 var MemberEntry = require('./db_schema/memberEntryModel.js');
+var BillEntry = require('./db_schema/billEntryModel.js');
 var MemberProfile = require('./db_schema/memberProfileModel.js');
 var MemberVote = require('./db_schema/memberVoteModel.js');
 
@@ -98,8 +97,24 @@ var memberProfile = {};
 var billInfo = {};
 
 
+///////////
+// ROUTES
+///////////
+// search db for bill subjects
+app.get('/searchKeywords/:keyword', function(req, res){
+  // get keyword(s) from req and replace all the underscores with spaces
+  var keyword = req.params.keyword.replace(/_/g, ' ');
+  // search through bills using the keyword received from the user
+  BillEntry.find({$text: {$search: keyword}})
+  .exec(function(err, bills){
+    if (err){console.log(err);}
+    console.log("bills:", bills);
+    // send back the bill_id's of the bills that match the keyword to client
+    var billIds = bills.map(function(bill){return bill.bill_id});
+    res.send(200, billIds);
+  });
+});
 
-// Set up routing to listen for GET requests from front-end
 // on a GET request to '/members/*' we see if it is a call for all members or a specific member
 app.get('/members/*', function(req, res){
   var pathObj = pathParse(req.url);
@@ -113,7 +128,6 @@ app.get('/members/*', function(req, res){
   }
   // if call for all, send back JSON of memberList and trendingListcreated on server start
   else if (pathObj.base === 'all') {
-
     res.send({memberList: memberList, trendingList: trendingList});
   } else {
     // we are depending on the base being a valid member_id if it is not 'all'

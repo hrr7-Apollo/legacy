@@ -8,7 +8,7 @@
     </div>
 
     <div class="col-xs-6 col-sm-3 profiles-fix first-profile-text">
-      <div>        
+      <div>
         <div><b>{{ member.data.firstname }} {{ member.data.lastname }}</b></div>
         <div>{{ member.data.age }} Years Old</div>
         <div>{{ member.data.party }}</div>
@@ -40,7 +40,7 @@
       <!-- Add Second Member Search -->
       <div ng-hide="secondMember.data.id">
          <input class="form-control input-sm" type="text" placeholder="Search by Politician Name" ng-model="addMember" typeahead="person as person.title for person in allMembers | filter:{id: '!' + member.data.id} | filter:{role: member.data.role} | filter: $viewValue | limitTo:5" />
-        <button class="btn btn-default btn-sm text-capitalize" ng-click="loadMember()"> Compare {{member.data.role}} </button> 
+        <button class="btn btn-default btn-sm text-capitalize" ng-click="loadMember()"> Compare {{member.data.role}} </button>
       </div> <!-- End Second Member Search -->
 
       <div ng-if="secondMember.data.id" class="second-member-data">
@@ -59,8 +59,9 @@
       <h2 class="col-sm-12 text-center">Most Recent Votes</h2>
       <div class="bill-search col-sm-8 col-sm-offset-2">
         <input type="text" class="form-control" placeholder="Filter Bills by Keyword" ng-model="billKeyword" />
+        <button class="btn btn-default" ng-click="getBillsByKeyword()"> Search </button>
       </div>
-      <div class="bills col-sm-10 col-sm-offset-1" ng-repeat="bill in member.data.votes | filter:billKeyword | limitTo: 3">
+      <div class="bills col-sm-10 col-sm-offset-1" ng-repeat="bill in filterVotesByKeyword(member.data.votes) | limitTo: 3">
         <div class="bill col-sm-12">
             <div class="col-sm-1 member-vote vote-left" ng-class="{positive: (bill.vote === 'Yea' || bill.vote === 'Yes' || bill.vote === 'Aye'), negative: (bill.vote === 'Nay' || bill.vote === 'No')}">
               <p>{{ bill.vote }}</p>
@@ -110,7 +111,7 @@
 
     <div class="col-sm-12 graph center-align">
     </div>
-  
+
   </div>
 
 </div>

@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=master)](https://travis-ci.org/hrr7-Apollo/legacy) - Master Branch
 
-[![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=development)](https://travis-ci.org/hrr7-Apollo/legacy) - Development Branch 
+[![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=development)](https://travis-ci.org/hrr7-Apollo/legacy) - Development Branch
 
 # Project Name
 
@@ -11,6 +11,7 @@
   - __Product Owner__: Diedra Rater
   - __Scrum Master__: Nick Balestra
   - __Development Team Members__: Derek Olson, Greg Varias
+
 
 
 ## Table of Contents
@@ -83,6 +84,29 @@ From within the root directory run:
 ```
 npm install
 bower install
+```
+
+### Loading sample bill data
+
+In your terminal, run mongodb by typing in the command
+```
+mongod
+```
+
+In a new terminal tab, switch into the server folder, enter the mongo shell by using the command
+```
+mongo
+```
+
+Select the 'legacy' database by running the command
+```
+use legacy
+```
+and run the following commands:
+
+```
+load('billSeedFile.js');
+db.billentries.createIndex( { terms: "text" } );
 ```
 
 ## Contributing
