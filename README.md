@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=master)](https://travis-ci.org/hrr7-Apollo/legacy)
+[![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=master)](https://travis-ci.org/hrr7-Apollo/legacy) - Master Branch
+
+[![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=development)](https://travis-ci.org/hrr7-Apollo/legacy) - Development Branch 
 
 # Project Name
 
@@ -123,7 +125,3 @@ Front-end team:
 
 Stretch:
 - add ui improvements/slight design
-
-
-
-
