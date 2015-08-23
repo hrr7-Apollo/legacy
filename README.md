@@ -1,12 +1,17 @@
+[![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=master)](https://travis-ci.org/hrr7-Apollo/legacy) - Master Branch
+
+[![Build Status](https://travis-ci.org/hrr7-Apollo/legacy.svg?branch=development)](https://travis-ci.org/hrr7-Apollo/legacy) - Development Branch
+
 # Project Name
 
   Political Profiler
 
 ## Team
 
-  - __Product Owner__: Christopher Griffis
-  - __Scrum Master__: Syed Jafri
-  - __Development Team Members__: Andrey Azov, Cliff Saporta Cheng
+  - __Product Owner__: Diedra Rater
+  - __Scrum Master__: Nick Balestra
+  - __Development Team Members__: Derek Olson, Greg Varias
+
 
 
 ## Table of Contents
@@ -118,13 +123,15 @@ Questions:
 
 
 Back-end team:
-- implement a database
-- when a user searches for a senator, check if that person has already been stored
-- if not, grab query the api for that person and store it in the database
-
+[x] implement a database
+[x] when a user searches for a senator, check if that person has already been stored if not, grab query the api for that person and store it in the database
+[x] when a user searches for a senator recent votes, check if those votes has already been stored if not, grab query the api for that person and store it in the database
+- Updated tests to reflect the new architecture with the caching layer
+- Refactor and cleanup the server.js (abstracting and definign away all the callbacks for the cacheOnDB() )
 
 Stretch:
-- research into getting bulk data of bills for keywords
+[x] research into getting bulk data of bills for keywords - Too costly and against our space complexity costs
+- Add logic to invalidate cache after a sepcified amount fo time
 - if we can get the keywords from bulk calls, try storing bills from limited time period (ie last 30 days) for easy keyword-searching
 - on user searching for a keyword, query the database for recent bills with that keyword, then store in the database for future searches
 
@@ -142,7 +149,3 @@ Front-end team:
 
 Stretch:
 - add ui improvements/slight design
-
-
-
-
