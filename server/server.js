@@ -28,6 +28,7 @@ db.once('open', function() {
 ///////////
 var MemberEntry = require('./db_schema/memberEntryModel.js');
 var MemberProfile = require('./db_schema/memberProfileModel.js');
+var MemberVote = require('./db_schema/memberVoteModel.js');
 
 var app = express();
 
@@ -117,7 +118,7 @@ app.get('/members/*', function(req, res){
     },function(){
       var start = now();
       console.log('API-callback');
-      
+
       members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
         // (also, add this congressman to the trending list)
       memberProfile = new MemberProfile();
@@ -141,7 +142,7 @@ app.get('/members/*', function(req, res){
     }, db);
 
 
-    
+
 
     //old code vv
     // members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
@@ -175,14 +176,56 @@ app.get('/votes/*', function(req, res){
 
   var pathObj = pathParse(req.url);
   var member_id = Number(pathObj.base);
-  members.getMemberVotes(member_id, function(objects){
-    var memberVotes = [];
-    objects.forEach(function(listing){
-      memberVotes.push(utils.makeVoteInfo(listing));
+
+
+  var query = {id: member_id};
+  utils.cacheOnDB(MemberVote, query, function(foundVotes){
+    var start = now();
+    // console.log(foundVotes[0].votes);
+    res.send(foundVotes[0].votes);
+    var end = now();
+    console.log('DB Time: ', (end - start).toFixed(5));
+  }, function(){
+    var start = now();
+    members.getMemberVotes(member_id, function(objects){
+
+      var memberVotes = [];
+      objects.forEach(function(listing){
+        memberVotes.push(utils.makeVoteInfo(listing));
+      });
+
+      memberVote = new MemberVote();
+      memberVote.id = member_id;
+      memberVote.votes = memberVotes;
+
+      memberVote.save(function(err) {
+        if (err) {
+          console.log('ERROR:', err);
+          res.send(err);
+        }
+        res.json(memberVote);
+      })
+
+      // console.log(memberVote);
+      res.send(memberVote.votes);
+      var end = now();
+      console.log('API Time: ', (end - start).toFixed(5));
     });
-    res.send(memberVotes);
-  });
+
+
+  }, db);
+
+
 });
+
+
+
+
+
+
+
+
+
 
 // on a GET request to 'bills/*', we are counting on the * to be a valid number for a bill_ID
 // we use path to parse out the base of the url which will be the bill_ID as a string
