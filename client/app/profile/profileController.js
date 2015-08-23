@@ -80,6 +80,7 @@ module.exports = function profileController($scope, $stateParams, Home, $http){
     $scope.getBillsByKeyword = function(){
       // get text out of input field
       var keyword = $scope.billKeyword.replace(/ /g, '_');
+      $scope.billKeyword = '';
       console.log('scope billKeyword:', $scope.billKeyword);
       // send GET request to /searchKeywords with text as params
       $http({
@@ -98,11 +99,18 @@ module.exports = function profileController($scope, $stateParams, Home, $http){
     ******************************************/
     $scope.filterVotesByKeyword = function(){
       // check to see if the data has loaded and a keyword has been searched for in the bills collection
-      if ($scope.member.data && $scope.member.data.votes && $scope.filteredBillIds.length){
-        // return true if the vote has a bill id that matches the bill ids returned from the keyword search
-        return $scope.member.data.votes.filter(function(vote) {
-          return $scope.filteredBillIds.indexOf(vote.bill_id) !== -1;
-        });
+      if ($scope.member.data && $scope.member.data.votes){
+        if ($scope.filteredBillIds.length){
+          console.log("inside if statement");
+          // return true if the vote has a bill id that matches the bill ids returned from the keyword search
+          return $scope.member.data.votes.filter(function(vote) {
+            console.log("vote:", vote);
+            console.log("$scope.filteredBillIds.indexOf(vote.bill_id) !== -1:", $scope.filteredBillIds.indexOf(vote.bill_id) !== -1);
+            return $scope.filteredBillIds.indexOf(vote.bill_id) !== -1;
+          });
+        } else {
+          return $scope.member.data.votes;
+        }
       }
     };
 

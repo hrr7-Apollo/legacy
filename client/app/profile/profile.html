@@ -61,7 +61,7 @@
         <input type="text" class="form-control" placeholder="Filter Bills by Keyword" ng-model="billKeyword" />
         <button class="btn btn-default" ng-click="getBillsByKeyword()"> Search </button>
       </div>
-      <div class="bills col-sm-10 col-sm-offset-1" ng-repeat="bill in member.data.votes | filter:filterVotesByKeyword() | limitTo: 3">
+      <div class="bills col-sm-10 col-sm-offset-1" ng-repeat="bill in filterVotesByKeyword(member.data.votes) | limitTo: 3">
         <div class="bill col-sm-12">
             <div class="col-sm-1 member-vote vote-left" ng-class="{positive: (bill.vote === 'Yea' || bill.vote === 'Yes' || bill.vote === 'Aye'), negative: (bill.vote === 'Nay' || bill.vote === 'No')}">
               <p>{{ bill.vote }}</p>
