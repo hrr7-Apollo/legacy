@@ -279,7 +279,7 @@ utils.cacheOnDB(MemberEntry, {}, function(foundMembers){
     });
     // console.log('MEMBER LIST:', memberList);
     utils.addMembersToTrendingList(null, memberList, trendingList);
-    console.log('Trending List ', trendingList);
+    // console.log('Trending List ', trendingList);
     var end = now();
     console.log('API Time: ', (end - start).toFixed(5));
   });

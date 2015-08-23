@@ -59,7 +59,8 @@ module.exports = {
       vote: listing.option.value,
       bill_question: listing.vote.question,
       bill_question_details: listing.vote.question_details,
-      result: listing.vote.result
+      result: listing.vote.result,
+      bill_id: listing.vote.related_bill
     };
   },
 
@@ -78,6 +79,7 @@ module.exports = {
       }
   */
   makeBillInfo: function(listing) {
+    console.log('BILL LISTING ',listing);
     return {
       question: listing.question,
       thomas_link: listing.thomas_link,
