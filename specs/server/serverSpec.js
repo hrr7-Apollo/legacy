@@ -24,10 +24,10 @@ describe("Server", function() {
         expect(res.body).to.have.property("trendingList");
         expect(res.body.trendingList).to.not.equal(null);
         done();
-      });    
+      });
   });
 
-  it("responds to requests to '/members/:id' with a member object", function(done){
+  xit("responds to requests to '/members/:id' with a member object", function(done){
     /* members.getMember will receive a congressman object form the govtrack site
     and this object will be formatted by utils.makeMemberProfile,
     so whatever utils.makeMemberProfile returns must exist in the response */
@@ -46,7 +46,7 @@ describe("Server", function() {
       });
   });
 
-  it("responds to requests to '/votes/:id' with a memberVotes object", function(done){
+  xit("responds to requests to '/votes/:id' with a memberVotes object", function(done){
     /* members.members.getMemberVotes will receive an array of congressman votes
     which will be formatted by utils.makeVoteInfo,
     so response body should be an array of whatever utils.makeVoteInfo returns */
