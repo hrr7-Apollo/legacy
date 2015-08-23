@@ -122,12 +122,14 @@ Questions:
 - are we deploying on Heroku? something else?
 
 
+
 Back-end team:
 [x] implement a database
 [x] when a user searches for a senator, check if that person has already been stored if not, grab query the api for that person and store it in the database
 [x] when a user searches for a senator recent votes, check if those votes has already been stored if not, grab query the api for that person and store it in the database
 - Updated tests to reflect the new architecture with the caching layer
 - Refactor and cleanup the server.js (abstracting and definign away all the callbacks for the cacheOnDB() )
+
 
 Stretch:
 [x] research into getting bulk data of bills for keywords - Too costly and against our space complexity costs
@@ -138,11 +140,8 @@ Stretch:
 
 
 Front-end team:
-- implement geolocation to find the user's state
-- show/suggest senators for that state
-- remove 'recent searches'? is that a useful feature? or just place the senators for the user's location above that section
-- or combine the two features and make a suggested senators based on location first and last searched second
-- maybe start with a naive approach first (just based on location with api call), and then expand it later if we feel it would be worthwhile enough to the user based on the time it would take the implement it
+- implement geolocation to find the user's state - DONE
+- show/suggest senators for that state - DONE
 
 - research development with heroku (any limitations for database/storage?)
 
