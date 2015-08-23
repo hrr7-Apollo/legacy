@@ -181,7 +181,7 @@ app.get('/votes/*', function(req, res){
   var query = {id: member_id};
   utils.cacheOnDB(MemberVote, query, function(foundVotes){
     var start = now();
-    // console.log(foundVotes[0].votes);
+    console.log(foundVotes[0].votes);
     res.send(foundVotes[0].votes);
     var end = now();
     console.log('DB Time: ', (end - start).toFixed(5));
@@ -206,7 +206,7 @@ app.get('/votes/*', function(req, res){
         res.json(memberVote);
       })
 
-      // console.log(memberVote);
+      console.log(memberVote);
       res.send(memberVote.votes);
       var end = now();
       console.log('API Time: ', (end - start).toFixed(5));
