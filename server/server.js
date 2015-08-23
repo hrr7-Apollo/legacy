@@ -1,6 +1,9 @@
 var express = require('express');
 var path = require('path');
 var pathParse = require('path-parse'); // polyfill for older Node versions
+
+// var bodyParser = require('body-parser') // *** ADDED ***
+
 var favicon = require('serve-favicon');
 var members = require('./memberController');
 var bills = require('./billController');
@@ -40,6 +43,13 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + "/../public"));
 app.use(favicon(__dirname + '/../client/favicon.ico'));
+
+
+// // parse application/x-www-form-urlencoded
+// app.use(bodyParser.urlencoded({ extended: false })) // *** ADDED ***
+// // parse application/json
+// app.use(bodyParser.json()) // *** ADDED ***
+
 
 /* memberList will eventually look like this after initial API call resolves
   { id1: {memberEntry},
@@ -88,6 +98,23 @@ var memberProfile = {};
 var billInfo = {};
 
 // Set up routing to listen for GET requests from front-end
+
+///////////
+// ROUTES
+///////////
+// search db for bill subjects
+app.get('/searchKeywords/:keyword', function(req, res){
+  // get keyword(s) from req
+  var keywords = req.params;
+  console.log('keywords:', keywords);
+  // perform indexed query using keyword
+  BillEntry.find({$text: {$search: keywords}})
+  .exec(function(err, bills){
+    console.log("bills:", bills);
+  });
+  // reduce response to array of ID's to send back to client
+  res.send(200, "what is the up??");
+});
 
 // on a GET request to '/members/*' we see if it is a call for all members or a specific member
 app.get('/members/*', function(req, res){

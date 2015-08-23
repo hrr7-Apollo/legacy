@@ -7,7 +7,7 @@
   - __Product Owner__: Christopher Griffis
   - __Scrum Master__: Syed Jafri
   - __Development Team Members__: Andrey Azov, Cliff Saporta Cheng
-  
+
 
 ## Table of Contents
 
@@ -68,7 +68,7 @@ Enter `npm start` in one terminal window
 
 Run `gulp` in the root of the project in a different terminal window. This will start the `gulp watch` task, which runs js-hint and builds the project files in the public folder.
 
-Every time a change is made in the client folder, the project will be re-built and placed in the public folder in real-time. One of the tasks automatically run by gulp watcher during this step is `browserify-dev`, which executes very quickly, but produces a huge concatenated js file. Therefore this is suitable (and convenient) only for development purposes. 
+Every time a change is made in the client folder, the project will be re-built and placed in the public folder in real-time. One of the tasks automatically run by gulp watcher during this step is `browserify-dev`, which executes very quickly, but produces a huge concatenated js file. Therefore this is suitable (and convenient) only for development purposes.
 
 ### Installing Dependencies
 
@@ -79,6 +79,29 @@ From within the root directory run:
 ```
 npm install
 bower install
+```
+
+### Loading sample bill data
+
+In your terminal, run mongodb by typing in the command
+```
+mongod
+```
+
+In a new terminal tab, switch into the server folder, enter the mongo shell by using the command
+```
+mongo
+```
+
+Select the 'legacy' database by running the command
+```
+use legacy
+```
+and run the following commands:
+
+```
+load('seedBill.js');
+db.collections.billentries.createIndex( { subjects: "text" } );
 ```
 
 ## Contributing
