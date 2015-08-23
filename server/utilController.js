@@ -123,7 +123,6 @@ module.exports = {
       dbModel.find(dbQuery).exec(function(err, found){
         if(err){
           console.log('ERROR: ', err);
-          res.send(err);
         }
         // if we got data stored on DB, we pass it to the callback for it
         if (found.length > 0) {

@@ -120,7 +120,7 @@ app.get('/members/*', function(req, res){
       
       members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
         // (also, add this congressman to the trending list)
-      var memberProfile = new MemberProfile();
+      memberProfile = new MemberProfile();
         var profileProperties  = utils.makeMemberProfile(listing);
         _.extend(memberProfile, profileProperties);
         // console.log(memberProfile);
@@ -230,7 +230,7 @@ utils.cacheOnDB(MemberEntry, {}, function(foundMembers){
           // console.log('ERROR:', err);
           res.send(err);
         }
-        res.json(memberEntry);
+        // res.json(memberEntry);
       });
 
     });
