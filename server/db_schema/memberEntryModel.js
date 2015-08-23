@@ -13,6 +13,9 @@ var memberEntrySchema = new mongoose.Schema({
   },
   title:{
     type: String
+  },
+  role: {
+    type:String
   }
 });
 

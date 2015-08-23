@@ -7,6 +7,7 @@ var bills = require('./billController');
 var utils = require('./utilController');
 var mongoose = require('mongoose');
 var _ = require('underscore');
+var now = require("performance-now");
 
 ///////////
 // CONFIG
@@ -26,7 +27,8 @@ db.once('open', function() {
 // MODELS
 ///////////
 var MemberEntry = require('./db_schema/memberEntryModel.js');
-
+var MemberProfile = require('./db_schema/memberProfileModel.js');
+var MemberVote = require('./db_schema/memberVoteModel.js');
 
 var app = express();
 
@@ -93,36 +95,63 @@ app.get('/members/*', function(req, res){
     var member_id = Number(pathObj.base);
     // We are not formatting the returned object
     members.getMemberHistoricVotes(member_id, function(listing){
+      // console.log('LISTING:', listing);
       res.send(listing);
     });
   }
   // if call for all, send back JSON of memberList and trendingListcreated on server start
   else if (pathObj.base === 'all') {
-    //res.send({memberList: memberList, trendingList: trendingList});
 
-    // MemberEntry.find({}).exec(function(err, members){
-    //   if(err){
-    //     console.log('ERROR: ', err);
-    //     res.send(err);
-    //   }
-    //   // console.log('members: ', members);
-    //   memberList = _.reduce(members, function(accumulator, current){
-    //     accumulator[current.id] = current;
-    //     return accumulator;
-    //   }, {});
-    //   // console.log('TEST ', test);
-    //   console.log('SENDING MEMBER LIST AND TREND LIST');
-    //   
-    // })
     res.send({memberList: memberList, trendingList: trendingList});
   } else { // we are depending on the base being a valid member_id if it is not 'all'
     var member_id = Number(pathObj.base);
-    members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
-      // (also, add this congressman to the trending list)
+    //new code
+    var query = {id: member_id};
+
+    utils.cacheOnDB(MemberProfile, query, function(foundMember){
+      var start = now();
+      // console.log('DB-callback', foundMember);
       utils.addMembersToTrendingList(member_id, memberList, trendingList);
-      memberProfile = utils.makeMemberProfile(listing);
-      res.send(memberProfile); // send back just the profile for that member
-    });
+      res.send(foundMember[0]);
+      var end = now();
+      console.log('DB Time: ', (end - start).toFixed(5));
+    },function(){
+      var start = now();
+      console.log('API-callback');
+
+      members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
+        // (also, add this congressman to the trending list)
+      memberProfile = new MemberProfile();
+        var profileProperties  = utils.makeMemberProfile(listing);
+        _.extend(memberProfile, profileProperties);
+        // console.log(memberProfile);
+        memberProfile.save(function(err) {
+          if (err) {
+            console.log('ERROR:', err);
+            res.send(err);
+          }
+          res.json(memberProfile);
+        })
+
+        utils.addMembersToTrendingList(member_id, memberList, trendingList);
+        console.log(memberProfile);
+        res.send(memberProfile); // send back just the profile for that member
+      });
+      var end = now()
+      console.log('API Time: ', (end - start).toFixed(5));
+    }, db);
+
+
+
+
+    //old code vv
+    // members.getMember(member_id, function(listing){ // use callback in getMember() to populate the memberProfile object
+    //   // (also, add this congressman to the trending list)
+    //   utils.addMembersToTrendingList(member_id, memberList, trendingList);
+    //   memberProfile = utils.makeMemberProfile(listing);
+    //   console.log(memberProfile);
+    //   res.send(memberProfile); // send back just the profile for that member
+    // });
   }
 });
 
@@ -147,14 +176,56 @@ app.get('/votes/*', function(req, res){
 
   var pathObj = pathParse(req.url);
   var member_id = Number(pathObj.base);
-  members.getMemberVotes(member_id, function(objects){
-    var memberVotes = [];
-    objects.forEach(function(listing){
-      memberVotes.push(utils.makeVoteInfo(listing));
+
+
+  var query = {id: member_id};
+  utils.cacheOnDB(MemberVote, query, function(foundVotes){
+    var start = now();
+    // console.log(foundVotes[0].votes);
+    res.send(foundVotes[0].votes);
+    var end = now();
+    console.log('DB Time: ', (end - start).toFixed(5));
+  }, function(){
+    var start = now();
+    members.getMemberVotes(member_id, function(objects){
+
+      var memberVotes = [];
+      objects.forEach(function(listing){
+        memberVotes.push(utils.makeVoteInfo(listing));
+      });
+
+      memberVote = new MemberVote();
+      memberVote.id = member_id;
+      memberVote.votes = memberVotes;
+
+      memberVote.save(function(err) {
+        if (err) {
+          console.log('ERROR:', err);
+          res.send(err);
+        }
+        res.json(memberVote);
+      })
+
+      // console.log(memberVote);
+      res.send(memberVote.votes);
+      var end = now();
+      console.log('API Time: ', (end - start).toFixed(5));
     });
-    res.send(memberVotes);
-  });
+
+
+  }, db);
+
+
 });
+
+
+
+
+
+
+
+
+
 
 // on a GET request to 'bills/*', we are counting on the * to be a valid number for a bill_ID
 // we use path to parse out the base of the url which will be the bill_ID as a string
@@ -173,27 +244,48 @@ app.get('/*', function(req, res){
 });
 
 // this expression runs on server start, retrieves a list of current members and writes it to memberList
-members.getAllMembers(function(objects){
-  objects.forEach(function(listing){
-    var id = listing.person.id;
-    memberList[id] = utils.makeMemberEntry(listing);
-    var memberProperties = utils.makeMemberEntry(listing);
-
-    var memberEntry = new MemberEntry();
-    _.extend(memberEntry, memberProperties);
-    
-    memberEntry.save(function(err) {
-      if (err) {
-        // console.log('ERROR:', err);
-        res.send(err);
-      }
-      res.json(memberEntry);
-    });
-
-  });
-  
-  console.log('MEMBER LIST:', memberList);
+// Check if we have members data on the db (stretch: how old is that data)
+// TODO: stretch - check how old is the data stored on DB, and reseed from trckgov if necessary.
+utils.cacheOnDB(MemberEntry, {}, function(foundMembers){
+  var start = now();
+  memberList = _.reduce(foundMembers, function(accumulator, current){
+    accumulator[current.id] = current;
+    return accumulator;
+  }, {});
+  // console.log('MEMBER LIST:', memberList);
   utils.addMembersToTrendingList(null, memberList, trendingList);
-});
+  console.log('Trending List ', trendingList);
+  var end = now();
+  console.log('DB Time: ', (end - start).toFixed(5));
+}, function(){
+  members.getAllMembers(function(objects){
+    var start = now();
+    objects.forEach(function(listing){
+      var id = listing.person.id;
+      memberList[id] = utils.makeMemberEntry(listing);
+      var memberProperties = utils.makeMemberEntry(listing);
+
+      var memberEntry = new MemberEntry();
+      _.extend(memberEntry, memberProperties);
+
+      memberEntry.save(function(err) {
+        if (err) {
+          // console.log('ERROR:', err);
+          res.send(err);
+        }
+        // res.json(memberEntry);
+      });
+
+    });
+    // console.log('MEMBER LIST:', memberList);
+    utils.addMembersToTrendingList(null, memberList, trendingList);
+    console.log('Trending List ', trendingList);
+    var end = now();
+    console.log('API Time: ', (end - start).toFixed(5));
+  });
+}, db);
+
+
+
 
 module.exports = app;
