@@ -109,7 +109,7 @@ app.get('/searchKeywords/:keyword', function(req, res){
   BillEntry.find({$text: {$search: keyword}})
   .exec(function(err, bills){
     if (err){console.log(err);}
-    console.log("bills:", bills);
+    // console.log("bills:", bills);
     // send back the bill_id's of the bills that match the keyword to client
     var billIds = bills.map(function(bill){return bill.bill_id});
     res.send(200, billIds);
