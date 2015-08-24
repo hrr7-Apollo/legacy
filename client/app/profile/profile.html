@@ -58,8 +58,7 @@
     <div class="bill-votes col-sm-8 col-sm-offset-2">
       <h2 class="col-sm-12 text-center">Most Recent Votes</h2>
       <div class="bill-search col-sm-8 col-sm-offset-2">
-        <input type="text" class="form-control" placeholder="Filter Bills by Keyword" ng-model="billKeyword" />
-        <button class="btn btn-default" ng-click="getBillsByKeyword()"> Search </button>
+        <input type="text" class="form-control" placeholder="Filter Bills by Keyword" ng-model="billKeyword" ng-keyup="getBillsByKeyword()" />
       </div>
       <div class="bills col-sm-10 col-sm-offset-1" ng-repeat="bill in filterVotesByKeyword(member.data.votes) | limitTo: 3">
         <div class="bill col-sm-12">
