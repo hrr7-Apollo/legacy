@@ -8,6 +8,7 @@ var utils = require('./utilController');
 var mongoose = require('mongoose');
 var _ = require('underscore');
 var now = require("performance-now");
+var dbFixture = require("./billSeedFixture.js");
 
 ///////////
 // CONFIG
@@ -245,7 +246,34 @@ app.get('/*', function(req, res){
 });
 
 
+// On start check if we have those on DB already
+// load('billSeedFile.js');
+  // IF not add them/run them
+  // load('billSeedFile.js');
+  // db.billentries.createIndex( { terms: "text" } );
 
+utils.cacheOnDB(BillEntry, {}, function(foundBills){
+  // No need to do anything, cause DB is already seeded
+}, function(){
+  // load('billSeedFile.js');
+  _.each(dbFixture, function(billEntry){
+    var entry = new BillEntry(billEntry);
+
+    entry.save(function(err) {
+        if (err) {
+          // console.log('ERROR:', err);
+          res.send(err);
+        }
+        res.json(memberEntry);
+      });
+  })
+  // db.billentries.createIndex( { terms: "text" } );
+  db.collections.billentries.createIndex({ terms: "text" });
+}, db);
+
+
+
+//
 // this expression runs on server start, retrieves a list of current members and writes it to memberList
 // Check if we have members data on the db (stretch: how old is that data)
 // TODO: stretch - check how old is the data stored on DB, and reseed from trckgov if necessary.
@@ -285,5 +313,7 @@ utils.cacheOnDB(MemberEntry, {}, function(foundMembers){
     // console.log('SERVER INITIAL BOOT (EMPTY DB) - API Time: ', (end - start).toFixed(5)); // PERFS-TEST
   });
 }, db);
+
+
 
 module.exports = app;
