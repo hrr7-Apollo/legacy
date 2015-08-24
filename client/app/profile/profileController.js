@@ -82,7 +82,6 @@ module.exports = function profileController($scope, $stateParams, Home, $http){
       if ($scope.billKeyword){
         // get text out of input field
         var keyword = $scope.billKeyword.replace(/ /g, '_');
-        $scope.billKeyword = '';
         console.log('scope billKeyword:', $scope.billKeyword);
         // send GET request to /searchKeywords with text as params
         $http({
@@ -106,7 +105,7 @@ module.exports = function profileController($scope, $stateParams, Home, $http){
     $scope.filterVotesByKeyword = function(){
       // check to see if the data has loaded and a keyword has been searched for in the bills collection
       if ($scope.member.data && $scope.member.data.votes){
-        if ($scope.filteredBillIds.length){
+        if ($scope.billKeyword.length){
           // return true if the vote has a bill id that matches the bill ids returned from the keyword search
           return $scope.member.data.votes.filter(function(vote) {
             return $scope.filteredBillIds.indexOf(vote.bill_id) !== -1;
