@@ -32,7 +32,7 @@ var gulp = require('gulp'),
     autoprefixer = require('gulp-autoprefixer'); // not necessary, but adds prefixes for all browsers
 var Server = require('karma').Server; // this is for testing using Karma
 var mocha = require('gulp-mocha'); // this is for backend testing
-
+var exit = require('gulp-exit');
 
 var paths = {
   scripts: ['client/**/*.js'], // previously had: '!client/lib/**/*.js'
@@ -123,15 +123,15 @@ gulp.task('styles', function() {
 });
 
 // Runs mocha tests for backend for the client side once and exits
-gulp.task('test-backend', function () {
+gulp.task('test-backend',['test-client'], function () {
   return gulp.src(paths.backendTests, {read: false})
-  // gulp-mocha needs filepaths so you can't have any plugins before it 
-    .pipe(mocha({reporter: 'spec'}));
+  // gulp-mocha needs filepaths so you can't have any plugins before it
+    .pipe(mocha({reporter: 'spec'})).pipe(exit());
 });
 
 // Runs tests for the client side once and exits
 // see this repo for inspiration: https://github.com/karma-runner/gulp-karma
-gulp.task('test-client',['test-backend'], function (done) {
+gulp.task('test-client', function (done) {
   new Server({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
@@ -159,6 +159,6 @@ gulp.task('watch', ['lint'], function() {
 gulp.task('build', ['lint', 'browserify-prod', 'views', 'styles', 'images']);
 gulp.task('build-heroku', ['browserify-prod', 'views', 'styles', 'images']);
 
-gulp.task('test', ['test-client']);
+gulp.task('test', ['test-backend']);
 
 gulp.task('default', ['lint', 'browserify-dev', 'views', 'styles', 'images', 'watch']);
