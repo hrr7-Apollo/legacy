@@ -12,7 +12,7 @@ var congressmanprofile = angular.module('congressmanprofile', [
   //ex congressmanprofile.home
   'ui.router',
   'ui.bootstrap',
-  'angular-loading-bar', 
+  'angular-loading-bar',
   'ngAnimate',
   home.name,
   profile.name

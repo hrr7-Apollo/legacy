@@ -59,7 +59,8 @@ module.exports = {
       vote: listing.option.value,
       bill_question: listing.vote.question,
       bill_question_details: listing.vote.question_details,
-      result: listing.vote.result
+      result: listing.vote.result,
+      bill_id: listing.vote.related_bill
     };
   },
 
@@ -117,7 +118,7 @@ module.exports = {
 
   cacheOnDB: function(dbModel, dbQuery, dbCallBack, apiCallback, db){
     // Build the DB query to search if the data is present
-    
+
     if(db.models[dbModel.modelName]){
       //this if statement will check if model queried was defined yet
       dbModel.find(dbQuery).exec(function(err, found){
@@ -136,7 +137,4 @@ module.exports = {
       apiCallback();
     }
   }
-
-
-
 };

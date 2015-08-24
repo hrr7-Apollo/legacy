@@ -1,3 +1,6 @@
+# instructions for setting up Travis to work with karma and Chrome taken from:
+# http://www.andrewsouthpaw.com/2015/02/12/travis-ci-and-you/
+
 language: node_js
 node_js:
 - '0.12'
