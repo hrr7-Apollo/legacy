@@ -31,7 +31,7 @@ describe("Utils controller", function() {
       phone: '202-224-5842'
     };
 
-    xit("correctly builds member profile out of the govtrack api response object", function(){
+    it("correctly builds member profile out of the govtrack api response object", function(){
       expect(utils.makeMemberProfile(responseFromGovTrack)).to.eql(memberProfile);
     });
 
@@ -82,7 +82,7 @@ describe("Utils controller", function() {
     };
     var trendingList;
 
-    xit("puts 8 congressmen into the trending list if congressman's id is not provided", function(){
+    it("puts 8 congressmen into the trending list if congressman's id is not provided", function(){
       trendingList = [];
       utils.addMembersToTrendingList(null, members, trendingList);
       expect(trendingList.length).to.equal(8);
@@ -96,7 +96,7 @@ describe("Utils controller", function() {
         trendingList = [{id: 1, value: 'foo'}, {id: 2, value: 'bar'}, {id: 3, value: 'baz'}];
       });
 
-      xit("if congressman with this id is not in trending list, removes the last member of the list and puts the congressman on the first place of the list", function(){
+      it("if congressman with this id is not in trending list, removes the last member of the list and puts the congressman on the first place of the list", function(){
         utils.addMembersToTrendingList(4, members, trendingList);
         expect(trendingList[0].id).to.equal(4);
       });

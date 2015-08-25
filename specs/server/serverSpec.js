@@ -27,18 +27,23 @@ describe("Server", function() {
       });
   });
 
-  xit("responds to requests to '/members/:id' with a member object", function(done){
+  it("responds to requests to '/members/:id' with a member object", function(done){
     /* members.getMember will receive a congressman object form the govtrack site
     and this object will be formatted by utils.makeMemberProfile,
     so whatever utils.makeMemberProfile returns must exist in the response */
     sinon.stub(members, 'getMember', function(id, callback){callback();});
-    sinon.stub(utils, 'makeMemberProfile', function(listing){return {foo: 'bar'};});
+    sinon.stub(utils, 'makeMemberProfile', function(listing){return {id: 666};});
     sinon.stub(utils, 'addMembersToTrendingList');
+    sinon.stub(utils, 'cacheOnDB', function(dbModel, dbQuery, dbCallBack, apiCallback, db){
+      apiCallback();
+    });
     request(app).get('/members/1')
       .expect(200)
       .end(function(err, res){
+        console.log(res.body);
         expect(members.getMember).to.have.been.calledOnce;
-        expect(res.body).to.eql({foo: 'bar'});
+        expect(res.body.id).to.eql(666);
+        expect(res.body._id).to.not.eql(undefined);
         members.getMember.restore();
         utils.makeMemberProfile.restore();
         utils.addMembersToTrendingList.restore();
@@ -46,7 +51,7 @@ describe("Server", function() {
       });
   });
 
-  xit("responds to requests to '/votes/:id' with a memberVotes object", function(done){
+  it("responds to requests to '/votes/:id' with a memberVotes object", function(done){
     /* members.members.getMemberVotes will receive an array of congressman votes
     which will be formatted by utils.makeVoteInfo,
     so response body should be an array of whatever utils.makeVoteInfo returns */
