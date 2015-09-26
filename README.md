@@ -8,9 +8,9 @@
 
 ## Team
 
-  - __Product Owner__: Diedra Rater
-  - __Scrum Master__: Nick Balestra
-  - __Development Team Members__: Derek Olson, Greg Varias
+  - __Scrum Master__: [Nick Balestra](https://github.com/nickbalestra)
+  - __Product Owner__: [Diedra Rater](https://github.com/dierat)
+  - __Development Team Members__: [Derek Olson](https://github.com/derekjosepholson), [Greg Varias](https://github.com/gregRV)
 
 
 ## Table of Contents
