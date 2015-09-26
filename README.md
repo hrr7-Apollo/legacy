@@ -5,6 +5,10 @@
 
 # Political Profiler
 
+![Political Profiler home page](http://i132.photobucket.com/albums/q17/dierat/software%20dev%20portfolio%20images/politicalprofiler_homepage.png)
+
+![Political Profiler politician page](http://i132.photobucket.com/albums/q17/dierat/software%20dev%20portfolio%20images/politicalprofiler_politicianpage.png)
+
 
 ## Team
 
